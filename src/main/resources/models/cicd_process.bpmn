@@ -1,0 +1,501 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Web Modeler" exporterVersion="8c4dae7" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.4.0" camunda:diagramRelationId="733b910c-9f95-4f71-b27f-ae2490a14e28">
+  <bpmn:process id="ci_cd_process" name="CICD process" isExecutable="true">
+    <bpmn:extensionElements>
+      <zeebe:userTaskForm id="UserTaskForm_1hlk7cs">{
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.5.0",
+  "exporter": {
+    "name": "Camunda Web Modeler",
+    "version": "8c4dae7"
+  },
+  "schemaVersion": 16,
+  "id": "terminate-automatic-milestone-copy-0izum5s",
+  "components": [
+    {
+      "label": "Terminate milestones copy process ?",
+      "type": "checkbox",
+      "layout": {
+        "row": "Row_0xepxwy",
+        "columns": null
+      },
+      "id": "Field_1fk9wiu",
+      "key": "terminate",
+      "defaultValue": true
+    }
+  ],
+  "type": "default"
+}</zeebe:userTaskForm>
+    </bpmn:extensionElements>
+    <bpmn:startEvent id="Event_0d5twd6">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=substring(string(now()), 1, 23)+&#34;Z&#34;" target="lastSync" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_0ldie3h</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0ldie3h" sourceRef="Event_0d5twd6" targetRef="Gateway_1pmbjdn" />
+    <bpmn:parallelGateway id="Gateway_1pmbjdn">
+      <bpmn:incoming>Flow_0ldie3h</bpmn:incoming>
+      <bpmn:outgoing>Flow_1by2n87</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1w5qf9o</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_1by2n87" sourceRef="Gateway_1pmbjdn" targetRef="Activity_0y64ak5" />
+    <bpmn:sequenceFlow id="Flow_1wfboz2" sourceRef="Activity_0y64ak5" targetRef="Gateway_1l8arj9" />
+    <bpmn:endEvent id="Event_1yevfi1">
+      <bpmn:incoming>Flow_03z05lw</bpmn:incoming>
+      <bpmn:signalEventDefinition id="SignalEventDefinition_1oye8dp" signalRef="Signal_017odf0" />
+    </bpmn:endEvent>
+    <bpmn:exclusiveGateway id="Gateway_1l8arj9" name="should terminate ?" default="Flow_1aez65q">
+      <bpmn:incoming>Flow_1wfboz2</bpmn:incoming>
+      <bpmn:outgoing>Flow_03z05lw</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1aez65q</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_03z05lw" name="yes" sourceRef="Gateway_1l8arj9" targetRef="Event_1yevfi1">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=terminate</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1aez65q" sourceRef="Gateway_1l8arj9" targetRef="Activity_0y64ak5" />
+    <bpmn:userTask id="Activity_0y64ak5" name="Terminate automatic milestone copy">
+      <bpmn:extensionElements>
+        <zeebe:formDefinition formKey="camunda-forms:bpmn:UserTaskForm_1hlk7cs" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1by2n87</bpmn:incoming>
+      <bpmn:incoming>Flow_1aez65q</bpmn:incoming>
+      <bpmn:outgoing>Flow_1wfboz2</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:subProcess id="Activity_05fj7aw" triggeredByEvent="true">
+      <bpmn:startEvent id="Event_0m3p265">
+        <bpmn:outgoing>Flow_0sejhkh</bpmn:outgoing>
+        <bpmn:signalEventDefinition id="SignalEventDefinition_0hi6ha2" signalRef="Signal_017odf0" />
+      </bpmn:startEvent>
+      <bpmn:endEvent id="Event_1o4rf6i">
+        <bpmn:incoming>Flow_0sejhkh</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_0sejhkh" sourceRef="Event_0m3p265" targetRef="Event_1o4rf6i" />
+    </bpmn:subProcess>
+    <bpmn:serviceTask id="Activity_00m7wfw" name="get token" zeebe:modelerTemplate="io.camunda.connectors.HttpJson.v2" zeebe:modelerTemplateVersion="7" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE3LjAzMzUgOC45OTk5N0MxNy4wMzM1IDEzLjQ0NzUgMTMuNDI4MSAxNy4wNTI5IDguOTgwNjUgMTcuMDUyOUM0LjUzMzE2IDE3LjA1MjkgMC45Mjc3NjUgMTMuNDQ3NSAwLjkyNzc2NSA4Ljk5OTk3QzAuOTI3NzY1IDQuNTUyNDggNC41MzMxNiAwLjk0NzA4MyA4Ljk4MDY1IDAuOTQ3MDgzQzEzLjQyODEgMC45NDcwODMgMTcuMDMzNSA0LjU1MjQ4IDE3LjAzMzUgOC45OTk5N1oiIGZpbGw9IiM1MDU1NjIiLz4KPHBhdGggZD0iTTQuOTMxMjYgMTQuMTU3MUw2Ljc4MTA2IDMuNzE0NzFIMTAuMTM3NUMxMS4xOTE3IDMuNzE0NzEgMTEuOTgyNCAzLjk4MzIzIDEyLjUwOTUgNC41MjAyN0MxMy4wNDY1IDUuMDQ3MzYgMTMuMzE1IDUuNzMzNTggMTMuMzE1IDYuNTc4OTJDMTMuMzE1IDcuNDQ0MTQgMTMuMDcxNCA4LjE1NTIyIDEyLjU4NDEgOC43MTIxNUMxMi4xMDY3IDkuMjU5MTMgMTEuNDU1MyA5LjYzNzA1IDEwLjYyOTggOS44NDU5TDEyLjA2MTkgMTQuMTU3MUgxMC4zMzE1TDkuMDMzNjQgMTAuMDI0OUg3LjI0MzUxTDYuNTEyNTQgMTQuMTU3MUg0LjkzMTI2Wk03LjQ5NzExIDguNTkyODFIOS4yNDI0OEM5Ljk5ODMyIDguNTkyODEgMTAuNTkwMSA4LjQyMzc0IDExLjAxNzcgOC4wODU2MUMxMS40NTUzIDcuNzM3NTMgMTEuNjc0MSA3LjI2NTEzIDExLjY3NDEgNi42Njg0MkMxMS42NzQxIDYuMTkxMDYgMTEuNTI0OSA1LjgxODExIDExLjIyNjUgNS41NDk1OUMxMC45MjgyIDUuMjcxMTMgMTAuNDU1OCA1LjEzMTkgOS44MDkzNiA1LjEzMTlIOC4xMDg3NEw3LjQ5NzExIDguNTkyODFaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.camunda:http-json:1" retries="3" />
+        <zeebe:ioMapping>
+          <zeebe:input source="noAuth" target="authentication.type" />
+          <zeebe:input source="POST" target="method" />
+          <zeebe:input source="=camundaTokenUrl" target="url" />
+          <zeebe:input source="20" target="connectionTimeoutInSeconds" />
+          <zeebe:input source="20" target="readTimeoutInSeconds" />
+          <zeebe:input source="0" target="writeTimeoutInSeconds" />
+          <zeebe:input source="={&#34;grant_type&#34;:&#34;client_credentials&#34;, &#34;audience&#34;:&#34;api.cloud.camunda.io&#34;, &#34;client_id&#34;:&#34;{{secrets.MODELER_CLIENT_ID}}&#34;, &#34;client_secret&#34;:&#34;{{secrets.MODELER_CLIENT_SECRET}}&#34;}" target="body" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="resultExpression" value="={token: response.body.access_token}" />
+          <zeebe:header key="retryBackoff" value="PT0S" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_144meie</bpmn:incoming>
+      <bpmn:incoming>Flow_05ds3tw</bpmn:incoming>
+      <bpmn:outgoing>Flow_0p12uom</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_01rtcl6" name="get milestones" zeebe:modelerTemplate="io.camunda.connectors.HttpJson.v2" zeebe:modelerTemplateVersion="7" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE3LjAzMzUgOC45OTk5N0MxNy4wMzM1IDEzLjQ0NzUgMTMuNDI4MSAxNy4wNTI5IDguOTgwNjUgMTcuMDUyOUM0LjUzMzE2IDE3LjA1MjkgMC45Mjc3NjUgMTMuNDQ3NSAwLjkyNzc2NSA4Ljk5OTk3QzAuOTI3NzY1IDQuNTUyNDggNC41MzMxNiAwLjk0NzA4MyA4Ljk4MDY1IDAuOTQ3MDgzQzEzLjQyODEgMC45NDcwODMgMTcuMDMzNSA0LjU1MjQ4IDE3LjAzMzUgOC45OTk5N1oiIGZpbGw9IiM1MDU1NjIiLz4KPHBhdGggZD0iTTQuOTMxMjYgMTQuMTU3MUw2Ljc4MTA2IDMuNzE0NzFIMTAuMTM3NUMxMS4xOTE3IDMuNzE0NzEgMTEuOTgyNCAzLjk4MzIzIDEyLjUwOTUgNC41MjAyN0MxMy4wNDY1IDUuMDQ3MzYgMTMuMzE1IDUuNzMzNTggMTMuMzE1IDYuNTc4OTJDMTMuMzE1IDcuNDQ0MTQgMTMuMDcxNCA4LjE1NTIyIDEyLjU4NDEgOC43MTIxNUMxMi4xMDY3IDkuMjU5MTMgMTEuNDU1MyA5LjYzNzA1IDEwLjYyOTggOS44NDU5TDEyLjA2MTkgMTQuMTU3MUgxMC4zMzE1TDkuMDMzNjQgMTAuMDI0OUg3LjI0MzUxTDYuNTEyNTQgMTQuMTU3MUg0LjkzMTI2Wk03LjQ5NzExIDguNTkyODFIOS4yNDI0OEM5Ljk5ODMyIDguNTkyODEgMTAuNTkwMSA4LjQyMzc0IDExLjAxNzcgOC4wODU2MUMxMS40NTUzIDcuNzM3NTMgMTEuNjc0MSA3LjI2NTEzIDExLjY3NDEgNi42Njg0MkMxMS42NzQxIDYuMTkxMDYgMTEuNTI0OSA1LjgxODExIDExLjIyNjUgNS41NDk1OUMxMC45MjgyIDUuMjcxMTMgMTAuNDU1OCA1LjEzMTkgOS44MDkzNiA1LjEzMTlIOC4xMDg3NEw3LjQ5NzExIDguNTkyODFaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.camunda:http-json:1" retries="3" />
+        <zeebe:ioMapping>
+          <zeebe:input source="bearer" target="authentication.type" />
+          <zeebe:input source="=token" target="authentication.token" />
+          <zeebe:input source="POST" target="method" />
+          <zeebe:input source="=camundaModelerUrl+&#34;/api/v1/milestones/search&#34;" target="url" />
+          <zeebe:input source="20" target="connectionTimeoutInSeconds" />
+          <zeebe:input source="20" target="readTimeoutInSeconds" />
+          <zeebe:input source="0" target="writeTimeoutInSeconds" />
+          <zeebe:input source="={&#10;  &#34;filter&#34;: {&#10;    &#34;created&#34;: &#34;&#62;&#34;+lastSync&#10;  },&#10;  &#34;page&#34;: 0,&#10;  &#34;size&#34;: 50&#10;}" target="body" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="resultExpression" value="={&#10;  lastSync:substring(string(now()), 1, 23)+&#34;Z&#34;,&#10;  milestones: response.body.items&#10;}" />
+          <zeebe:header key="retryBackoff" value="PT0S" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0p12uom</bpmn:incoming>
+      <bpmn:outgoing>Flow_0h15so9</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:subProcess id="Activity_0n1e9c1">
+      <bpmn:incoming>Flow_0h15so9</bpmn:incoming>
+      <bpmn:outgoing>Flow_0i7qdt2</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics isSequential="true">
+        <bpmn:extensionElements>
+          <zeebe:loopCharacteristics inputCollection="=milestones" inputElement="milestone" />
+        </bpmn:extensionElements>
+      </bpmn:multiInstanceLoopCharacteristics>
+      <bpmn:startEvent id="Event_1mfo4xz">
+        <bpmn:outgoing>Flow_117hx7z</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:serviceTask id="Activity_0tcvgzh" name="get milestone" zeebe:modelerTemplate="io.camunda.connectors.HttpJson.v2" zeebe:modelerTemplateVersion="7" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE3LjAzMzUgOC45OTk5N0MxNy4wMzM1IDEzLjQ0NzUgMTMuNDI4MSAxNy4wNTI5IDguOTgwNjUgMTcuMDUyOUM0LjUzMzE2IDE3LjA1MjkgMC45Mjc3NjUgMTMuNDQ3NSAwLjkyNzc2NSA4Ljk5OTk3QzAuOTI3NzY1IDQuNTUyNDggNC41MzMxNiAwLjk0NzA4MyA4Ljk4MDY1IDAuOTQ3MDgzQzEzLjQyODEgMC45NDcwODMgMTcuMDMzNSA0LjU1MjQ4IDE3LjAzMzUgOC45OTk5N1oiIGZpbGw9IiM1MDU1NjIiLz4KPHBhdGggZD0iTTQuOTMxMjYgMTQuMTU3MUw2Ljc4MTA2IDMuNzE0NzFIMTAuMTM3NUMxMS4xOTE3IDMuNzE0NzEgMTEuOTgyNCAzLjk4MzIzIDEyLjUwOTUgNC41MjAyN0MxMy4wNDY1IDUuMDQ3MzYgMTMuMzE1IDUuNzMzNTggMTMuMzE1IDYuNTc4OTJDMTMuMzE1IDcuNDQ0MTQgMTMuMDcxNCA4LjE1NTIyIDEyLjU4NDEgOC43MTIxNUMxMi4xMDY3IDkuMjU5MTMgMTEuNDU1MyA5LjYzNzA1IDEwLjYyOTggOS44NDU5TDEyLjA2MTkgMTQuMTU3MUgxMC4zMzE1TDkuMDMzNjQgMTAuMDI0OUg3LjI0MzUxTDYuNTEyNTQgMTQuMTU3MUg0LjkzMTI2Wk03LjQ5NzExIDguNTkyODFIOS4yNDI0OEM5Ljk5ODMyIDguNTkyODEgMTAuNTkwMSA4LjQyMzc0IDExLjAxNzcgOC4wODU2MUMxMS40NTUzIDcuNzM3NTMgMTEuNjc0MSA3LjI2NTEzIDExLjY3NDEgNi42Njg0MkMxMS42NzQxIDYuMTkxMDYgMTEuNTI0OSA1LjgxODExIDExLjIyNjUgNS41NDk1OUMxMC45MjgyIDUuMjcxMTMgMTAuNDU1OCA1LjEzMTkgOS44MDkzNiA1LjEzMTlIOC4xMDg3NEw3LjQ5NzExIDguNTkyODFaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="io.camunda:http-json:1" retries="3" />
+          <zeebe:ioMapping>
+            <zeebe:input source="bearer" target="authentication.type" />
+            <zeebe:input source="=token" target="authentication.token" />
+            <zeebe:input source="GET" target="method" />
+            <zeebe:input source="=camundaModelerUrl+&#34;/api/v1/milestones/&#34;+milestone.id" target="url" />
+            <zeebe:input source="20" target="connectionTimeoutInSeconds" />
+            <zeebe:input source="20" target="readTimeoutInSeconds" />
+          </zeebe:ioMapping>
+          <zeebe:taskHeaders>
+            <zeebe:header key="resultExpression" value="={&#10;  fileContent: string(response.body.content),&#10;  milestoneName: response.body.metadata.name,&#10;  milestoneAuthor: response.body.metadata.updatedBy&#10;}" />
+            <zeebe:header key="retryBackoff" value="PT0S" />
+          </zeebe:taskHeaders>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_01wbpe3</bpmn:incoming>
+        <bpmn:outgoing>Flow_18hajpy</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:endEvent id="Event_1k7dkb7">
+        <bpmn:incoming>Flow_1l73pny</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_117hx7z" sourceRef="Event_1mfo4xz" targetRef="Gateway_0siz06y" />
+      <bpmn:sequenceFlow id="Flow_18hajpy" sourceRef="Activity_0tcvgzh" targetRef="Activity_1blc0tu" />
+      <bpmn:sequenceFlow id="Flow_0j2x4ot" sourceRef="Activity_1gu3pib" targetRef="Activity_0euao7o" />
+      <bpmn:serviceTask id="Activity_0ugtlcq" name="create file to github" zeebe:modelerTemplate="io.camunda.connectors.HttpJson.v2" zeebe:modelerTemplateVersion="7" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE3LjAzMzUgOC45OTk5N0MxNy4wMzM1IDEzLjQ0NzUgMTMuNDI4MSAxNy4wNTI5IDguOTgwNjUgMTcuMDUyOUM0LjUzMzE2IDE3LjA1MjkgMC45Mjc3NjUgMTMuNDQ3NSAwLjkyNzc2NSA4Ljk5OTk3QzAuOTI3NzY1IDQuNTUyNDggNC41MzMxNiAwLjk0NzA4MyA4Ljk4MDY1IDAuOTQ3MDgzQzEzLjQyODEgMC45NDcwODMgMTcuMDMzNSA0LjU1MjQ4IDE3LjAzMzUgOC45OTk5N1oiIGZpbGw9IiM1MDU1NjIiLz4KPHBhdGggZD0iTTQuOTMxMjYgMTQuMTU3MUw2Ljc4MTA2IDMuNzE0NzFIMTAuMTM3NUMxMS4xOTE3IDMuNzE0NzEgMTEuOTgyNCAzLjk4MzIzIDEyLjUwOTUgNC41MjAyN0MxMy4wNDY1IDUuMDQ3MzYgMTMuMzE1IDUuNzMzNTggMTMuMzE1IDYuNTc4OTJDMTMuMzE1IDcuNDQ0MTQgMTMuMDcxNCA4LjE1NTIyIDEyLjU4NDEgOC43MTIxNUMxMi4xMDY3IDkuMjU5MTMgMTEuNDU1MyA5LjYzNzA1IDEwLjYyOTggOS44NDU5TDEyLjA2MTkgMTQuMTU3MUgxMC4zMzE1TDkuMDMzNjQgMTAuMDI0OUg3LjI0MzUxTDYuNTEyNTQgMTQuMTU3MUg0LjkzMTI2Wk03LjQ5NzExIDguNTkyODFIOS4yNDI0OEM5Ljk5ODMyIDguNTkyODEgMTAuNTkwMSA4LjQyMzc0IDExLjAxNzcgOC4wODU2MUMxMS40NTUzIDcuNzM3NTMgMTEuNjc0MSA3LjI2NTEzIDExLjY3NDEgNi42Njg0MkMxMS42NzQxIDYuMTkxMDYgMTEuNTI0OSA1LjgxODExIDExLjIyNjUgNS41NDk1OUMxMC45MjgyIDUuMjcxMTMgMTAuNDU1OCA1LjEzMTkgOS44MDkzNiA1LjEzMTlIOC4xMDg3NEw3LjQ5NzExIDguNTkyODFaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="io.camunda:http-json:1" retries="3" />
+          <zeebe:ioMapping>
+            <zeebe:input source="noAuth" target="authentication.type" />
+            <zeebe:input source="PUT" target="method" />
+            <zeebe:input source="=&#34;https://api.github.com/repos/&#34;+githubOwner+&#34;/&#34;+githubRepo+&#34;/contents/&#34;+githubBasePath+&#34;/&#34;+filename" target="url" />
+            <zeebe:input source="={&#10;  Accept: &#34;application/vnd.github+json&#34;,&#10;  Authorization: &#34;Bearer {{secrets.GITHUB_TOKEN}}&#34;&#10;}" target="headers" />
+            <zeebe:input source="20" target="connectionTimeoutInSeconds" />
+            <zeebe:input source="20" target="readTimeoutInSeconds" />
+            <zeebe:input source="0" target="writeTimeoutInSeconds" />
+            <zeebe:input source="={message:&#34;Automatic copy from milestone &#34;+milestoneName,&#10; committer:{name:milestoneAuthor.name,email:milestoneAuthor.email},content:base64content}" target="body" />
+          </zeebe:ioMapping>
+          <zeebe:taskHeaders>
+            <zeebe:header key="retryBackoff" value="PT0S" />
+          </zeebe:taskHeaders>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_04jjsjf</bpmn:incoming>
+        <bpmn:outgoing>Flow_1u9xlmf</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:sequenceFlow id="Flow_08utgbv" sourceRef="Activity_1blc0tu" targetRef="Activity_1gu3pib" />
+      <bpmn:serviceTask id="Activity_1blc0tu" name="get filename" zeebe:modelerTemplate="io.camunda.connectors.HttpJson.v2" zeebe:modelerTemplateVersion="7" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE3LjAzMzUgOC45OTk5N0MxNy4wMzM1IDEzLjQ0NzUgMTMuNDI4MSAxNy4wNTI5IDguOTgwNjUgMTcuMDUyOUM0LjUzMzE2IDE3LjA1MjkgMC45Mjc3NjUgMTMuNDQ3NSAwLjkyNzc2NSA4Ljk5OTk3QzAuOTI3NzY1IDQuNTUyNDggNC41MzMxNiAwLjk0NzA4MyA4Ljk4MDY1IDAuOTQ3MDgzQzEzLjQyODEgMC45NDcwODMgMTcuMDMzNSA0LjU1MjQ4IDE3LjAzMzUgOC45OTk5N1oiIGZpbGw9IiM1MDU1NjIiLz4KPHBhdGggZD0iTTQuOTMxMjYgMTQuMTU3MUw2Ljc4MTA2IDMuNzE0NzFIMTAuMTM3NUMxMS4xOTE3IDMuNzE0NzEgMTEuOTgyNCAzLjk4MzIzIDEyLjUwOTUgNC41MjAyN0MxMy4wNDY1IDUuMDQ3MzYgMTMuMzE1IDUuNzMzNTggMTMuMzE1IDYuNTc4OTJDMTMuMzE1IDcuNDQ0MTQgMTMuMDcxNCA4LjE1NTIyIDEyLjU4NDEgOC43MTIxNUMxMi4xMDY3IDkuMjU5MTMgMTEuNDU1MyA5LjYzNzA1IDEwLjYyOTggOS44NDU5TDEyLjA2MTkgMTQuMTU3MUgxMC4zMzE1TDkuMDMzNjQgMTAuMDI0OUg3LjI0MzUxTDYuNTEyNTQgMTQuMTU3MUg0LjkzMTI2Wk03LjQ5NzExIDguNTkyODFIOS4yNDI0OEM5Ljk5ODMyIDguNTkyODEgMTAuNTkwMSA4LjQyMzc0IDExLjAxNzcgOC4wODU2MUMxMS40NTUzIDcuNzM3NTMgMTEuNjc0MSA3LjI2NTEzIDExLjY3NDEgNi42Njg0MkMxMS42NzQxIDYuMTkxMDYgMTEuNTI0OSA1LjgxODExIDExLjIyNjUgNS41NDk1OUMxMC45MjgyIDUuMjcxMTMgMTAuNDU1OCA1LjEzMTkgOS44MDkzNiA1LjEzMTlIOC4xMDg3NEw3LjQ5NzExIDguNTkyODFaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="io.camunda:http-json:1" retries="3" />
+          <zeebe:ioMapping>
+            <zeebe:input source="bearer" target="authentication.type" />
+            <zeebe:input source="=token" target="authentication.token" />
+            <zeebe:input source="GET" target="method" />
+            <zeebe:input source="=camundaModelerUrl+&#34;/api/v1/files/&#34;+milestone.fileId" target="url" />
+            <zeebe:input source="20" target="connectionTimeoutInSeconds" />
+            <zeebe:input source="20" target="readTimeoutInSeconds" />
+          </zeebe:ioMapping>
+          <zeebe:taskHeaders>
+            <zeebe:header key="resultVariable" value="fileNameResponse" />
+            <zeebe:header key="resultExpression" value="={&#10;  filename:response.body.metadata.name&#10;}" />
+            <zeebe:header key="retryBackoff" value="PT0S" />
+          </zeebe:taskHeaders>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_18hajpy</bpmn:incoming>
+        <bpmn:outgoing>Flow_08utgbv</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:serviceTask id="Activity_0a3whln" name="replace file to github" zeebe:modelerTemplate="io.camunda.connectors.HttpJson.v2" zeebe:modelerTemplateVersion="7" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE3LjAzMzUgOC45OTk5N0MxNy4wMzM1IDEzLjQ0NzUgMTMuNDI4MSAxNy4wNTI5IDguOTgwNjUgMTcuMDUyOUM0LjUzMzE2IDE3LjA1MjkgMC45Mjc3NjUgMTMuNDQ3NSAwLjkyNzc2NSA4Ljk5OTk3QzAuOTI3NzY1IDQuNTUyNDggNC41MzMxNiAwLjk0NzA4MyA4Ljk4MDY1IDAuOTQ3MDgzQzEzLjQyODEgMC45NDcwODMgMTcuMDMzNSA0LjU1MjQ4IDE3LjAzMzUgOC45OTk5N1oiIGZpbGw9IiM1MDU1NjIiLz4KPHBhdGggZD0iTTQuOTMxMjYgMTQuMTU3MUw2Ljc4MTA2IDMuNzE0NzFIMTAuMTM3NUMxMS4xOTE3IDMuNzE0NzEgMTEuOTgyNCAzLjk4MzIzIDEyLjUwOTUgNC41MjAyN0MxMy4wNDY1IDUuMDQ3MzYgMTMuMzE1IDUuNzMzNTggMTMuMzE1IDYuNTc4OTJDMTMuMzE1IDcuNDQ0MTQgMTMuMDcxNCA4LjE1NTIyIDEyLjU4NDEgOC43MTIxNUMxMi4xMDY3IDkuMjU5MTMgMTEuNDU1MyA5LjYzNzA1IDEwLjYyOTggOS44NDU5TDEyLjA2MTkgMTQuMTU3MUgxMC4zMzE1TDkuMDMzNjQgMTAuMDI0OUg3LjI0MzUxTDYuNTEyNTQgMTQuMTU3MUg0LjkzMTI2Wk03LjQ5NzExIDguNTkyODFIOS4yNDI0OEM5Ljk5ODMyIDguNTkyODEgMTAuNTkwMSA4LjQyMzc0IDExLjAxNzcgOC4wODU2MUMxMS40NTUzIDcuNzM3NTMgMTEuNjc0MSA3LjI2NTEzIDExLjY3NDEgNi42Njg0MkMxMS42NzQxIDYuMTkxMDYgMTEuNTI0OSA1LjgxODExIDExLjIyNjUgNS41NDk1OUMxMC45MjgyIDUuMjcxMTMgMTAuNDU1OCA1LjEzMTkgOS44MDkzNiA1LjEzMTlIOC4xMDg3NEw3LjQ5NzExIDguNTkyODFaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="io.camunda:http-json:1" retries="3" />
+          <zeebe:ioMapping>
+            <zeebe:input source="noAuth" target="authentication.type" />
+            <zeebe:input source="PUT" target="method" />
+            <zeebe:input source="=&#34;https://api.github.com/repos/&#34;+githubOwner+&#34;/&#34;+githubRepo+&#34;/contents/&#34;+githubBasePath+&#34;/&#34;+filename" target="url" />
+            <zeebe:input source="={&#10;  Accept: &#34;application/vnd.github+json&#34;,&#10;  Authorization: &#34;Bearer {{secrets.GITHUB_TOKEN}}&#34;&#10;}" target="headers" />
+            <zeebe:input source="20" target="connectionTimeoutInSeconds" />
+            <zeebe:input source="20" target="readTimeoutInSeconds" />
+            <zeebe:input source="0" target="writeTimeoutInSeconds" />
+            <zeebe:input source="={message:&#34;Automatic copy from milestone &#34;+milestoneName,&#10; committer:{name:milestoneAuthor.name,email:milestoneAuthor.email},content:base64content,&#10;sha:sha}" target="body" />
+          </zeebe:ioMapping>
+          <zeebe:taskHeaders>
+            <zeebe:header key="retryBackoff" value="PT0S" />
+          </zeebe:taskHeaders>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_0iilzd6</bpmn:incoming>
+        <bpmn:outgoing>Flow_1l73pny</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:serviceTask id="Activity_0euao7o" name="check file in github" zeebe:modelerTemplate="io.camunda.connectors.HttpJson.v2" zeebe:modelerTemplateVersion="7" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE3LjAzMzUgOC45OTk5N0MxNy4wMzM1IDEzLjQ0NzUgMTMuNDI4MSAxNy4wNTI5IDguOTgwNjUgMTcuMDUyOUM0LjUzMzE2IDE3LjA1MjkgMC45Mjc3NjUgMTMuNDQ3NSAwLjkyNzc2NSA4Ljk5OTk3QzAuOTI3NzY1IDQuNTUyNDggNC41MzMxNiAwLjk0NzA4MyA4Ljk4MDY1IDAuOTQ3MDgzQzEzLjQyODEgMC45NDcwODMgMTcuMDMzNSA0LjU1MjQ4IDE3LjAzMzUgOC45OTk5N1oiIGZpbGw9IiM1MDU1NjIiLz4KPHBhdGggZD0iTTQuOTMxMjYgMTQuMTU3MUw2Ljc4MTA2IDMuNzE0NzFIMTAuMTM3NUMxMS4xOTE3IDMuNzE0NzEgMTEuOTgyNCAzLjk4MzIzIDEyLjUwOTUgNC41MjAyN0MxMy4wNDY1IDUuMDQ3MzYgMTMuMzE1IDUuNzMzNTggMTMuMzE1IDYuNTc4OTJDMTMuMzE1IDcuNDQ0MTQgMTMuMDcxNCA4LjE1NTIyIDEyLjU4NDEgOC43MTIxNUMxMi4xMDY3IDkuMjU5MTMgMTEuNDU1MyA5LjYzNzA1IDEwLjYyOTggOS44NDU5TDEyLjA2MTkgMTQuMTU3MUgxMC4zMzE1TDkuMDMzNjQgMTAuMDI0OUg3LjI0MzUxTDYuNTEyNTQgMTQuMTU3MUg0LjkzMTI2Wk03LjQ5NzExIDguNTkyODFIOS4yNDI0OEM5Ljk5ODMyIDguNTkyODEgMTAuNTkwMSA4LjQyMzc0IDExLjAxNzcgOC4wODU2MUMxMS40NTUzIDcuNzM3NTMgMTEuNjc0MSA3LjI2NTEzIDExLjY3NDEgNi42Njg0MkMxMS42NzQxIDYuMTkxMDYgMTEuNTI0OSA1LjgxODExIDExLjIyNjUgNS41NDk1OUMxMC45MjgyIDUuMjcxMTMgMTAuNDU1OCA1LjEzMTkgOS44MDkzNiA1LjEzMTlIOC4xMDg3NEw3LjQ5NzExIDguNTkyODFaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="io.camunda:http-json:1" retries="3" />
+          <zeebe:ioMapping>
+            <zeebe:input source="noAuth" target="authentication.type" />
+            <zeebe:input source="GET" target="method" />
+            <zeebe:input source="=&#34;https://api.github.com/repos/&#34;+githubOwner+&#34;/&#34;+githubRepo+&#34;/contents/&#34;+githubBasePath+&#34;/&#34;+filename" target="url" />
+            <zeebe:input source="={&#10;  Accept: &#34;application/vnd.github+json&#34;,&#10;  Authorization: &#34;Bearer {{secrets.GITHUB_TOKEN}}&#34;&#10;}" target="headers" />
+            <zeebe:input source="20" target="connectionTimeoutInSeconds" />
+            <zeebe:input source="20" target="readTimeoutInSeconds" />
+          </zeebe:ioMapping>
+          <zeebe:taskHeaders>
+            <zeebe:header key="resultExpression" value="={&#10;  sha: response.body.sha&#10;}" />
+            <zeebe:header key="errorExpression" value="=if error.code=&#34;404&#34; then bpmnError(&#34;404&#34;, &#34;file doesn&#39;t exist&#34;) else null" />
+            <zeebe:header key="retryBackoff" value="PT0S" />
+          </zeebe:taskHeaders>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_0j2x4ot</bpmn:incoming>
+        <bpmn:outgoing>Flow_0iilzd6</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:boundaryEvent id="Event_0x0g2qk" name="file doesn&#39;t exist" attachedToRef="Activity_0euao7o">
+        <bpmn:outgoing>Flow_04jjsjf</bpmn:outgoing>
+        <bpmn:errorEventDefinition id="ErrorEventDefinition_0unan7g" errorRef="Error_1bnuiew" />
+      </bpmn:boundaryEvent>
+      <bpmn:sequenceFlow id="Flow_0iilzd6" sourceRef="Activity_0euao7o" targetRef="Activity_0a3whln" />
+      <bpmn:sequenceFlow id="Flow_04jjsjf" sourceRef="Event_0x0g2qk" targetRef="Activity_0ugtlcq" />
+      <bpmn:sequenceFlow id="Flow_1l73pny" sourceRef="Activity_0a3whln" targetRef="Event_1k7dkb7" />
+      <bpmn:endEvent id="Event_0c535xs">
+        <bpmn:incoming>Flow_1u9xlmf</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_1u9xlmf" sourceRef="Activity_0ugtlcq" targetRef="Event_0c535xs" />
+      <bpmn:exclusiveGateway id="Gateway_0siz06y" name="Is milestone interesting ?" default="Flow_0caajdr">
+        <bpmn:incoming>Flow_117hx7z</bpmn:incoming>
+        <bpmn:outgoing>Flow_01wbpe3</bpmn:outgoing>
+        <bpmn:outgoing>Flow_0caajdr</bpmn:outgoing>
+      </bpmn:exclusiveGateway>
+      <bpmn:sequenceFlow id="Flow_01wbpe3" name="yes" sourceRef="Gateway_0siz06y" targetRef="Activity_0tcvgzh">
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=starts with(milestone.name, "release")</bpmn:conditionExpression>
+      </bpmn:sequenceFlow>
+      <bpmn:endEvent id="Event_1gs75d1">
+        <bpmn:incoming>Flow_0caajdr</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_0caajdr" name="no" sourceRef="Gateway_0siz06y" targetRef="Event_1gs75d1" />
+      <bpmn:serviceTask id="Activity_1gu3pib" name="Encode in base64">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="base64encode" />
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_08utgbv</bpmn:incoming>
+        <bpmn:outgoing>Flow_0j2x4ot</bpmn:outgoing>
+      </bpmn:serviceTask>
+    </bpmn:subProcess>
+    <bpmn:intermediateCatchEvent id="Event_0yep4pl">
+      <bpmn:incoming>Flow_0i7qdt2</bpmn:incoming>
+      <bpmn:outgoing>Flow_144meie</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0diob6s">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">=duration(cycleDelay)</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_144meie" name="Get token" sourceRef="Event_0yep4pl" targetRef="Activity_00m7wfw" />
+    <bpmn:sequenceFlow id="Flow_0p12uom" sourceRef="Activity_00m7wfw" targetRef="Activity_01rtcl6" />
+    <bpmn:sequenceFlow id="Flow_0h15so9" sourceRef="Activity_01rtcl6" targetRef="Activity_0n1e9c1" />
+    <bpmn:sequenceFlow id="Flow_0i7qdt2" sourceRef="Activity_0n1e9c1" targetRef="Event_0yep4pl" />
+    <bpmn:sequenceFlow id="Flow_1w5qf9o" sourceRef="Gateway_1pmbjdn" targetRef="Activity_0vksh6y" />
+    <bpmn:sequenceFlow id="Flow_05ds3tw" sourceRef="Activity_0vksh6y" targetRef="Activity_00m7wfw" />
+    <bpmn:scriptTask id="Activity_0vksh6y" name="Intialize endpoints if needed">
+      <bpmn:extensionElements>
+        <zeebe:script expression="=true" resultVariable="initialization" />
+        <zeebe:ioMapping>
+          <zeebe:output source="=if (camundaTokenUrl!=null) then camundaTokenUrl else &#34;https://login.cloud.camunda.io/oauth/token&#34;" target="camundaTokenUrl" />
+          <zeebe:output source="=if camundaModelerUrl!=null then camundaModelerUrl else &#34;https://modeler.cloud.camunda.io&#34;" target="camundaModelerUrl" />
+          <zeebe:output source="=if githubOwner!=null then githubOwner else &#34;chDame&#34;" target="githubOwner" />
+          <zeebe:output source="=if githubRepo!=null then githubRepo else &#34;test-cicd&#34;" target="githubRepo" />
+          <zeebe:output source="=if (githubBasePath!=null) then githubBasePath else &#34;src/main/resources/models&#34;" target="githubBasePath" />
+          <zeebe:output source="=if cycleDelay!=null then cycleDelay else &#34;PT1M&#34;" target="cycleDelay" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1w5qf9o</bpmn:incoming>
+      <bpmn:outgoing>Flow_05ds3tw</bpmn:outgoing>
+    </bpmn:scriptTask>
+  </bpmn:process>
+  <bpmn:signal id="Signal_017odf0" name="TerminateSignal" />
+  <bpmn:error id="Error_1bnuiew" name="404" errorCode="404" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="ci_cd_process">
+      <bpmndi:BPMNShape id="Event_0d5twd6_di" bpmnElement="Event_0d5twd6">
+        <dc:Bounds x="152" y="252" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0fvxogd_di" bpmnElement="Gateway_1pmbjdn">
+        <dc:Bounds x="255" y="245" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1xrcib1_di" bpmnElement="Event_1yevfi1">
+        <dc:Bounds x="1412" y="552" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1l8arj9_di" bpmnElement="Gateway_1l8arj9" isMarkerVisible="true">
+        <dc:Bounds x="1145" y="545" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1179" y="586" width="82" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0tdxo8y_di" bpmnElement="Activity_0y64ak5">
+        <dc:Bounds x="830" y="530" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0lbxyvm_di" bpmnElement="Activity_05fj7aw" isExpanded="true">
+        <dc:Bounds x="410" y="630" width="210" height="200" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1jt9xcr_di" bpmnElement="Event_0m3p265">
+        <dc:Bounds x="450" y="712" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1o4rf6i_di" bpmnElement="Event_1o4rf6i">
+        <dc:Bounds x="542" y="712" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0sejhkh_di" bpmnElement="Flow_0sejhkh">
+        <di:waypoint x="486" y="730" />
+        <di:waypoint x="542" y="730" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="BPMNShape_1o0djee" bpmnElement="Activity_00m7wfw">
+        <dc:Bounds x="530" y="230" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0dly8qo" bpmnElement="Activity_01rtcl6">
+        <dc:Bounds x="680" y="230" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0z1keqx" bpmnElement="Activity_0n1e9c1" isExpanded="true">
+        <dc:Bounds x="830" y="170" width="1170" height="300" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0961349" bpmnElement="Event_1mfo4xz">
+        <dc:Bounds x="852" y="252" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0n5555a" bpmnElement="Activity_0tcvgzh">
+        <dc:Bounds x="1050" y="230" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0dp80on" bpmnElement="Event_1k7dkb7">
+        <dc:Bounds x="1822" y="252" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_11z6alf_di" bpmnElement="Activity_0ugtlcq">
+        <dc:Bounds x="1640" y="330" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_18xtlqo_di" bpmnElement="Activity_1blc0tu">
+        <dc:Bounds x="1200" y="230" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_18huclc" bpmnElement="Activity_0a3whln">
+        <dc:Bounds x="1640" y="230" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0tbepbx" bpmnElement="Activity_0euao7o">
+        <dc:Bounds x="1490" y="230" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0c535xs_di" bpmnElement="Event_0c535xs">
+        <dc:Bounds x="1822" y="352" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0siz06y_di" bpmnElement="Gateway_0siz06y" isMarkerVisible="true">
+        <dc:Bounds x="925" y="245" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="920" y="208" width="60" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1gs75d1_di" bpmnElement="Event_1gs75d1">
+        <dc:Bounds x="1082" y="362" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_170a4ad_di" bpmnElement="Activity_1gu3pib">
+        <dc:Bounds x="1350" y="230" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_07bpnc6_di" bpmnElement="Event_0x0g2qk">
+        <dc:Bounds x="1522" y="292" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1446" y="335" width="78" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_0whdhu9" bpmnElement="Flow_117hx7z">
+        <di:waypoint x="888" y="270" />
+        <di:waypoint x="925" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1an058r" bpmnElement="Flow_18hajpy">
+        <di:waypoint x="1150" y="270" />
+        <di:waypoint x="1200" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0j2x4ot_di" bpmnElement="Flow_0j2x4ot">
+        <di:waypoint x="1450" y="270" />
+        <di:waypoint x="1490" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08utgbv_di" bpmnElement="Flow_08utgbv">
+        <di:waypoint x="1300" y="270" />
+        <di:waypoint x="1350" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0iilzd6_di" bpmnElement="Flow_0iilzd6">
+        <di:waypoint x="1590" y="270" />
+        <di:waypoint x="1640" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_04jjsjf_di" bpmnElement="Flow_04jjsjf">
+        <di:waypoint x="1540" y="328" />
+        <di:waypoint x="1540" y="370" />
+        <di:waypoint x="1640" y="370" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1l73pny_di" bpmnElement="Flow_1l73pny">
+        <di:waypoint x="1740" y="270" />
+        <di:waypoint x="1822" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1u9xlmf_di" bpmnElement="Flow_1u9xlmf">
+        <di:waypoint x="1740" y="370" />
+        <di:waypoint x="1822" y="370" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_01wbpe3_di" bpmnElement="Flow_01wbpe3">
+        <di:waypoint x="975" y="270" />
+        <di:waypoint x="1050" y="270" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1004" y="252" width="17" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0caajdr_di" bpmnElement="Flow_0caajdr">
+        <di:waypoint x="950" y="295" />
+        <di:waypoint x="950" y="380" />
+        <di:waypoint x="1082" y="380" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="959" y="335" width="13" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="BPMNShape_12fy0dn" bpmnElement="Event_0yep4pl">
+        <dc:Bounds x="2052" y="252" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_03abl1v_di" bpmnElement="Activity_0vksh6y">
+        <dc:Bounds x="360" y="230" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0ldie3h_di" bpmnElement="Flow_0ldie3h">
+        <di:waypoint x="188" y="270" />
+        <di:waypoint x="255" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1by2n87_di" bpmnElement="Flow_1by2n87">
+        <di:waypoint x="280" y="295" />
+        <di:waypoint x="280" y="570" />
+        <di:waypoint x="830" y="570" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1wfboz2_di" bpmnElement="Flow_1wfboz2">
+        <di:waypoint x="930" y="570" />
+        <di:waypoint x="1145" y="570" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03z05lw_di" bpmnElement="Flow_03z05lw">
+        <di:waypoint x="1195" y="570" />
+        <di:waypoint x="1412" y="570" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1296" y="552" width="17" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1aez65q_di" bpmnElement="Flow_1aez65q">
+        <di:waypoint x="1170" y="595" />
+        <di:waypoint x="1170" y="650" />
+        <di:waypoint x="880" y="650" />
+        <di:waypoint x="880" y="610" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0tatid1" bpmnElement="Flow_144meie">
+        <di:waypoint x="2070" y="252" />
+        <di:waypoint x="2070" y="100" />
+        <di:waypoint x="580" y="100" />
+        <di:waypoint x="580" y="230" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1302" y="82" width="48" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1qocgf9" bpmnElement="Flow_0p12uom">
+        <di:waypoint x="630" y="270" />
+        <di:waypoint x="680" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0yq2ift" bpmnElement="Flow_0h15so9">
+        <di:waypoint x="780" y="270" />
+        <di:waypoint x="830" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0y8e4k4" bpmnElement="Flow_0i7qdt2">
+        <di:waypoint x="2000" y="270" />
+        <di:waypoint x="2052" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1w5qf9o_di" bpmnElement="Flow_1w5qf9o">
+        <di:waypoint x="305" y="270" />
+        <di:waypoint x="360" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05ds3tw_di" bpmnElement="Flow_05ds3tw">
+        <di:waypoint x="460" y="270" />
+        <di:waypoint x="530" y="270" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
