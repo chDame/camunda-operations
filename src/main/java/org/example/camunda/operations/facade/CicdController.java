@@ -12,19 +12,19 @@ import org.springframework.web.bind.annotation.RestController;
 import io.camunda.zeebe.client.ZeebeClient;
 
 @RestController
-@RequestMapping("/process")
-public class ProcessController {
+@RequestMapping("/cicd")
+public class CicdController {
 
-  private static final Logger LOG = LoggerFactory.getLogger(ProcessController.class);
+  private static final Logger LOG = LoggerFactory.getLogger(CicdController.class);
   private final ZeebeClient zeebe;
   private static CopyMilestonesVariables copyMilestonesVariables = new CopyMilestonesVariables();
 
-  public ProcessController(ZeebeClient client) {
+  public CicdController(ZeebeClient client) {
     this.zeebe = client;
   }
 
-  @PostMapping("/startCICDcopies")
-  public void startCicd() {
+  @PostMapping("/start")
+  public void start() {
 
     zeebe
         .newCreateInstanceCommand()
@@ -34,12 +34,12 @@ public class ProcessController {
         .send();
   }
   
-  @GetMapping("/cicdConfig")
+  @GetMapping("/config")
   public CopyMilestonesVariables getCicdConfig() {
       return copyMilestonesVariables;
   }
   
-  @PostMapping("/cicdConfig")
+  @PostMapping("/config")
   public CopyMilestonesVariables getCicdConfig(@RequestBody CopyMilestonesVariables variables) {
       copyMilestonesVariables = variables;
       return copyMilestonesVariables;

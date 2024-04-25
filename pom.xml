@@ -18,8 +18,7 @@
 
   <properties>
     <java.version>17</java.version>
-    <spring-zeebe.version>8.4.0</spring-zeebe.version>
-    <zeebe.version>8.4.0</zeebe.version>
+    <spring-zeebe.version>8.5.0</spring-zeebe.version>
   </properties>
 
   <dependencies>
@@ -35,16 +34,10 @@
     </dependency>
 
     <dependency>
-      <groupId>io.camunda</groupId>
-      <artifactId>zeebe-client-java</artifactId>
-      <version>${zeebe.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>io.camunda</groupId>
-      <artifactId>spring-zeebe-starter</artifactId>
-      <version>${spring-zeebe.version}</version>
-    </dependency>
+	  <groupId>io.camunda</groupId>
+	  <artifactId>spring-boot-starter-camunda-sdk</artifactId>
+	  <version>${spring-zeebe.version}</version>
+	</dependency>
 
     <dependency>
       <groupId>org.springdoc</groupId>
@@ -89,6 +82,15 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <compilerArgs>
+            <arg>-parameters</arg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
@@ -104,7 +106,7 @@
           <!-- see: https://docs.camunda.io/docs/components/best-practices/development/testing-process-definitions/#writing-process-tests-in-java -->
           <groupId>io.camunda</groupId>
           <artifactId>zeebe-process-test-extension</artifactId>
-          <version>${zeebe.version}</version>
+          <version>${spring-zeebe.version}</version>
           <scope>test</scope>
         </dependency>
         <dependency>
@@ -140,4 +142,17 @@
       </dependencies>
     </profile>
   </profiles>
+  <repositories>
+    <repository>
+        <releases>
+            <enabled>true</enabled>
+        </releases>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
+        <id>identity</id>
+        <name>Camunda Identity</name>
+        <url>https://artifacts.camunda.com/artifactory/camunda-identity/</url>
+    </repository>
+  </repositories>
 </project>
