@@ -1,0 +1,23 @@
+camunda:
+  client:
+    mode: saas
+    auth:
+      client-id: xxx
+      client-secret: xxx
+    cluster-id: xxx
+    region: bru-2
+    
+#camunda:
+#  client:
+#    mode: oidc
+#    auth:
+#      client-id: CLIENT_ID
+#      client-secret: CLIENT_SECRET
+#      oidc-type: keycloak
+#      issuer: http://localhost:18080/auth/realms/camunda-platform
+#    zeebe:
+#      enabled: true
+#      gateway-url: http://localhost:26500
+#      base-url: http://localhost:8080
+#      prefer-rest-over-grpc: false
+#      audience: zeebe-api

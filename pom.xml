@@ -34,8 +34,8 @@
     </dependency>
 
     <dependency>
-	  <groupId>io.camunda</groupId>
-	  <artifactId>spring-boot-starter-camunda-sdk</artifactId>
+      <groupId>io.camunda.spring</groupId>
+      <artifactId>spring-boot-starter-camunda</artifactId>
 	  <version>${spring-zeebe.version}</version>
 	</dependency>
 
